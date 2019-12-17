@@ -16,9 +16,7 @@ var port = process.env.PORT || 8080;        // set our port
 let router = express.Router();              // get an instance of the express Router
 let db = new MongoDBClient();
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function (req, res) {
-    res.json(new Dashboard().get());
-});
+router.get('/', async (req, res)  => res.status(200).json(await new Dashboard(db).get()));
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api

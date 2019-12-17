@@ -13,7 +13,6 @@ export default class MongoDBClient {
 
   async getDashboard() {
     let toArray = await this._db.collection("groups").find({}).toArray();
-    console.log(toArray);
     return toArray;
   }
 

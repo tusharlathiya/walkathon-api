@@ -1,2 +1,7 @@
 .idea
 node_modules
+.env
+.envrc
+.DS_Store
+*.iml
+*.log
