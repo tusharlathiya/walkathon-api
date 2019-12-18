@@ -1,4 +1,4 @@
-import {MongoClient} from 'mongodb'
+import {MongoClient, ObjectID} from 'mongodb'
 
 export default class MongoDBClient {
 
@@ -16,4 +16,21 @@ export default class MongoDBClient {
     return toArray;
   }
 
+  getGroups() {
+      return this._db.collection("groups").aggregate([{
+            $addFields : {
+                totalSteps : { $sum : "$participants.steps"}
+            }},{
+                $project : {
+                    participants : 0
+                }
+            },{
+                $sort : {totalSteps : -1}
+            }
+        ]).toArray();
+  }
+
+  getGroupById(id) {
+      return this._db.collection("groups").findOne({'_id': ObjectID(id)});
+  }
 }
