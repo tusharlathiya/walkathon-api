@@ -1,19 +1,24 @@
 import {MongoClient, ObjectID} from 'mongodb'
+import {DB_NAME, DB_URL} from '../config/appConfig';
 
 export default class MongoDBClient {
-
   constructor() {
-    MongoClient.connect("mongodb://localhost:27017")
+    MongoClient.connect(DB_URL)
         .then(r => {
-              this._db = r.db("walkathon");
+              this._db = r.db(DB_NAME);
               this._db.createCollection("groups");
             }
         )
   }
 
-  async getDashboard() {
-    let toArray = await this._db.collection("groups").find({}).toArray();
-    return toArray;
+  getDashboard() {
+      return this._db.collection("groups").aggregate([{
+          $addFields : {
+              totalSteps : { $sum : "$participants.steps"}
+          }},{
+            $sort : {totalSteps : 1}
+          }
+      ]).toArray();
   }
 
   getGroups() {
@@ -33,4 +38,8 @@ export default class MongoDBClient {
   getGroupById(id) {
       return this._db.collection("groups").findOne({'_id': ObjectID(id)});
   }
+
+   getGroupByEmail(email) {
+      return this._db.collection("groups").findOne({'participants.email': email});
+   }
 }
